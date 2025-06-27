@@ -1,0 +1,29 @@
+system:
+  port: 4567
+  debug: true
+  staticpath: static
+  urlpathprefix: /api/v1
+
+db:
+  host: 192.168.18.234
+  port: 3306
+  hostname: root
+  password: Ptime@2025
+  database: janx_admin
+  # 最大连接数
+  maxopenconns: 25
+  # 最大空闲连接
+  maxidleconns: 5
+  # 连接超时（秒）
+  connmaxlifetime: 5
+  logstatus: false
+  loglevel: info
+
+log:
+  level: info
+  path: log
+  maxsize: 100
+  maxage: 10
+  maxbackups: 10
+  compress: true
+
