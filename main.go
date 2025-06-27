@@ -19,7 +19,7 @@ func main() {
 	initializa.InitLogger()
 
 	// 初始化mysql
-	initializa.InitMySQL()
+	initializa.InitPostgres()
 
 	// 初始化http service
 	initializa.InitService()

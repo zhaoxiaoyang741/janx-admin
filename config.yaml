@@ -5,11 +5,11 @@ system:
   urlpathprefix: /api/v1
 
 db:
-  host: 192.168.18.234
-  port: 3306
-  hostname: root
-  password: Ptime@2025
-  database: janx_admin
+  host: 192.168.18.45
+  port: 5432
+  hostname: janx-admin
+  password: 3tYapHD3aQAzCEmm
+  database: janx-admin
   # 最大连接数
   maxopenconns: 25
   # 最大空闲连接

@@ -5,7 +5,7 @@ import (
 	"janx-admin/global"
 	"time"
 
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
@@ -33,7 +33,7 @@ var logLevelMap = map[string]logger.LogLevel{
 	"info":   logger.Info,
 }
 
-func InitMySQL() {
+func InitPostgres() {
 	// 使用Builder模式和链式调用重构
 	builder := NewDatabaseBuilder().
 		BuildDSN().
@@ -49,7 +49,7 @@ func InitMySQL() {
 	}
 
 	global.Db = builder.db
-	fmt.Println("MySQL database connected successfully")
+	fmt.Println("PostgreSQL database connected successfully")
 }
 
 // NewDatabaseBuilder 创建数据库构建器
@@ -59,30 +59,29 @@ func NewDatabaseBuilder() *DatabaseBuilder {
 	}
 }
 
-// BuildDSN 构建数据源名称 - 使用函数式方法简化字符串构建
+// BuildDSN 构建数据源名称
 func (b *DatabaseBuilder) BuildDSN() *DatabaseBuilder {
 	if b.err != nil {
 		return b
 	}
 
-	dsnTemplate := "%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"
+	dsnTemplate := "host=%s user=%s password=%s dbname=%s port=%d sslmode=disable"
 	b.dsn = fmt.Sprintf(dsnTemplate,
-		global.Conf.Db.Hostname,
-		global.Conf.Db.Password,
 		global.Conf.Db.Host,
-		global.Conf.Db.Port,
+		global.Conf.Db.Hostname, // 修改为 Username
+		global.Conf.Db.Password,
 		global.Conf.Db.Database,
+		global.Conf.Db.Port,
 	)
 	return b
 }
 
-// ConfigureLogger 配置日志级别 - 使用map替代switch，支持函数式配置
+// ConfigureLogger 配置日志级别
 func (b *DatabaseBuilder) ConfigureLogger() *DatabaseBuilder {
 	if b.err != nil {
 		return b
 	}
 
-	// 使用函数式方法确定日志级别
 	determineLogLevel := func() logger.LogLevel {
 		if !global.Conf.Db.LogStatus {
 			return logger.Silent
@@ -98,7 +97,7 @@ func (b *DatabaseBuilder) ConfigureLogger() *DatabaseBuilder {
 	return b
 }
 
-// SetPoolConfig 设置连接池配置 - 封装配置逻辑
+// SetPoolConfig 设置连接池配置
 func (b *DatabaseBuilder) SetPoolConfig() *DatabaseBuilder {
 	if b.err != nil {
 		return b
@@ -118,17 +117,16 @@ func (b *DatabaseBuilder) Connect() *DatabaseBuilder {
 		return b
 	}
 
-	b.db, b.err = gorm.Open(mysql.Open(b.dsn), b.config)
+	b.db, b.err = gorm.Open(postgres.Open(b.dsn), b.config) // 修改为 postgres
 	return b
 }
 
-// TestConnection 测试连接并应用连接池配置 - 合并相关操作
+// TestConnection 测试连接并应用连接池配置
 func (b *DatabaseBuilder) TestConnection() *DatabaseBuilder {
 	if b.err != nil {
 		return b
 	}
 
-	// 使用闭包处理连接池配置，简化错误处理
 	configurePool := func() error {
 		sqlDB, err := b.db.DB()
 		if err != nil {
