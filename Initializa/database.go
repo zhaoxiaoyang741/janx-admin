@@ -5,6 +5,9 @@ import (
 	"janx-admin/global"
 	"time"
 
+	model "janx-admin/app/model"
+
+	"github.com/fatih/color"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -47,6 +50,8 @@ func InitPostgres() {
 	if builder.err != nil {
 		panic(fmt.Errorf("database initialization failed: %w", builder.err))
 	}
+
+	dbAutoMigrate(builder.db)
 
 	global.Db = builder.db
 	fmt.Println("PostgreSQL database connected successfully")
@@ -151,4 +156,12 @@ func (b *DatabaseBuilder) TestConnection() *DatabaseBuilder {
 // Complete 完成构建过程
 func (b *DatabaseBuilder) Complete() *DatabaseBuilder {
 	return b
+}
+
+func dbAutoMigrate(db *gorm.DB) {
+	if err := db.AutoMigrate(&model.User{}); err != nil {
+		red := color.New(color.FgRed).Add(color.Bold) // 创建红色加粗的格式
+		red.Printf("failed to migrate database:\n")   // 打印红色错误信息并退出
+		panic(err.Error())
+	}
 }

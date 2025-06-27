@@ -7,9 +7,10 @@ import (
 )
 
 type Config struct {
-	System System `json:"system" yaml:"system"`
-	Db     Db     `json:"db" yaml:"db"`
-	Log    Log    `json:"log" yaml:"log"`
+	System System     `json:"system" yaml:"system"`
+	Db     Db         `json:"db" yaml:"db"`
+	Log    Log        `json:"log" yaml:"log"`
+	Jwt    *JwtConfig `mapstructure:"jwt" json:"jwt"`
 }
 
 func InitConfig() Config {

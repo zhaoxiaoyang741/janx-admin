@@ -27,3 +27,14 @@ log:
   maxbackups: 10
   compress: true
 
+# jwt配置
+jwt:
+  # jwt标识
+  realm: janx admin
+  # 服务端密钥
+  key: secret key
+  # token过期时间, 小时
+  timeout: 12
+  # 刷新token最大过期时间, 小时
+  max-refresh: 12
+
