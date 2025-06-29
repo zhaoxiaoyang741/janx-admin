@@ -6,7 +6,7 @@
 ## 2. 安装postgresql
 docker 安装命令：   
 ```
-docker push postgres:17.5-alpine //拉取镜像   
+docker pull postgres:17.5-alpine //拉取镜像   
 docker run -d --name postgres -e POSTGRES_USER=root -e POSTGRES_PASSWORD=pg123456 -v /mnt/pgdata:/var/lib/postgresql/data -p 5432:5432 postgres:17.5-alpine //启动容器
 ```
 ## 3. 修改配置
