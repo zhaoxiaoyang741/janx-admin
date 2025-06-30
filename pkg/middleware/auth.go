@@ -12,8 +12,8 @@ import (
 // InitAuth 初始化jwt中间件
 func InitAuth() (*jwt.GinJWTMiddleware, error) {
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
-		Realm:           global.Conf.Jwt.Realm,                                 // jwt标识
-		Key:             []byte(global.Conf.Jwt.Key),                           // 服务端密钥
+		Realm: global.Conf.Jwt.Realm, // jwt标识
+		// Key:             []byte(global.Conf.Jwt.Key),                           // 服务端密钥
 		Timeout:         time.Hour * time.Duration(global.Conf.Jwt.Timeout),    // token过期时间
 		MaxRefresh:      time.Hour * time.Duration(global.Conf.Jwt.MaxRefresh), // token最大刷新时间(RefreshToken过期时间=Timeout+MaxRefresh)
 		PayloadFunc:     payloadFunc,                                           // 有效载荷处理
@@ -57,7 +57,6 @@ func identityHandler(c *gin.Context) interface{} {
 
 // 校验token的正确性, 处理登录逻辑
 func login(c *gin.Context) (interface{}, error) {
-	return nil, errors.New("未实现")
 	// var req vo.RegisterAndLoginRequest
 	// // 请求json绑定
 	// if err := c.ShouldBind(&req); err != nil {
@@ -84,6 +83,7 @@ func login(c *gin.Context) (interface{}, error) {
 	// return map[string]interface{}{
 	// 	"user": util.Struct2Json(user),
 	// }, nil
+	return nil, errors.New("未实现")
 }
 
 // 用户登录校验成功处理

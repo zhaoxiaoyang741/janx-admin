@@ -5,6 +5,7 @@ import (
 	"janx-admin/app/model"
 	"janx-admin/app/req"
 	"janx-admin/app/service"
+	encUtils "janx-admin/pkg/utils"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -36,9 +37,15 @@ func (uc *UserController) Create(c *gin.Context) {
 	if password == "" {
 		password = "123456"
 	}
+
+	encPassword, err := encUtils.EncryptPassword(password)
+	if err != nil {
+		utils.FailWithoutData(c, err.Error())
+		return
+	}
 	user.Username = r.Username
 	user.Nickname = r.Nickname
-	user.Password = r.Password
+	user.Password = encPassword
 	user.Email = r.Email
 	user.Phone = r.Phone
 	user.Avatar = r.Avatar
