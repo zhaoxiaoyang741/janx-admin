@@ -1,4 +1,4 @@
-package req
+package vo
 
 type UserCreateReq struct {
 	Username string `json:"username" form:"username"`
@@ -25,11 +25,4 @@ type UserListReq struct {
 	ReqPageInfo
 	Username string `json:"username" form:"username"`
 	Nickname string `json:"nickname" form:"nickname"`
-}
-
-type UserLoginReq struct {
-	Username  string `json:"username" form:"username"`
-	Password  string `json:"password" form:"password"`
-	Captcha   string `json:"captcha" form:"captcha"`
-	CaptchaId string `json:"captcha_id" form:"captcha_id"`
 }

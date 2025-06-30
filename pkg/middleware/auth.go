@@ -2,7 +2,10 @@ package middleware
 
 import (
 	"errors"
+	"janx-admin/app/service"
+	"janx-admin/app/vo"
 	"janx-admin/global"
+	"janx-admin/pkg/utils"
 	"time"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -57,33 +60,27 @@ func identityHandler(c *gin.Context) interface{} {
 
 // 校验token的正确性, 处理登录逻辑
 func login(c *gin.Context) (interface{}, error) {
+	var req vo.SystemLoginReq
 	// var req vo.RegisterAndLoginRequest
 	// // 请求json绑定
-	// if err := c.ShouldBind(&req); err != nil {
-	// 	return "", err
-	// }
+	if err := c.ShouldBind(&req); err != nil {
+		return nil, err
+	}
 
-	// u := &model.User{
-	// 	Username: req.Username,
-	// 	Password: req.Password,
-	// }
-	// ok := util.Verify(req.CaptchaId, req.Captcha)
-	// if !ok {
-	// 	return nil, errors.New("captcha verify fail")
-	// }
+	ok := utils.VerifyCaptcha(req.CaptchaId, req.Captcha)
+	if !ok {
+		return nil, errors.New("验证码错误")
+	}
 
-	// // 密码校验
-	// userRepository := repository.NewUserRepository()
-	// user, err := userRepository.Login(u)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	userService := service.NewUserService()
+	user, err := userService.ValidateUser(req.Username, req.Password)
+	if err != nil {
+		return nil, err
+	}
+	return map[string]interface{}{
+		"user": utils.Struct2Json(user),
+	}, nil
 
-	// // 将用户以json格式写入, payloadFunc/authorizator会使用到
-	// return map[string]interface{}{
-	// 	"user": util.Struct2Json(user),
-	// }, nil
-	return nil, errors.New("未实现")
 }
 
 // 用户登录校验成功处理

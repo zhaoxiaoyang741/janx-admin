@@ -1,4 +1,4 @@
-package req
+package vo
 
 type ReqPageInfo struct {
 	PageNum  int `json:"page_num" form:"page_num"`

@@ -3,8 +3,8 @@ package controller
 import (
 	"janx-admin/app/controller/utils"
 	"janx-admin/app/model"
-	"janx-admin/app/req"
 	"janx-admin/app/service"
+	"janx-admin/app/vo"
 	encUtils "janx-admin/pkg/utils"
 	"time"
 
@@ -26,7 +26,7 @@ func NewUserController() *UserController {
 }
 
 func (uc *UserController) Create(c *gin.Context) {
-	var r req.UserCreateReq
+	var r vo.UserCreateReq
 	err := utils.CheckReq(c, &r)
 	if err != nil {
 		utils.FailWithoutData(c, err.Error())
@@ -60,7 +60,7 @@ func (uc *UserController) Create(c *gin.Context) {
 }
 
 func (uc *UserController) Update(c *gin.Context) {
-	var r req.UserUpdataReq
+	var r vo.UserUpdataReq
 	err := utils.CheckReq(c, &r)
 	if err != nil {
 		utils.FailWithoutData(c, err.Error())
@@ -81,7 +81,7 @@ func (uc *UserController) Update(c *gin.Context) {
 }
 
 func (uc *UserController) Delete(c *gin.Context) {
-	var r req.UserDeleteReq
+	var r vo.UserDeleteReq
 	err := utils.CheckReq(c, &r)
 	if err != nil {
 		utils.FailWithoutData(c, err.Error())
@@ -96,7 +96,7 @@ func (uc *UserController) Delete(c *gin.Context) {
 }
 
 func (uc *UserController) List(c *gin.Context) {
-	var r req.UserListReq
+	var r vo.UserListReq
 	err := utils.CheckReq(c, &r)
 	if err != nil {
 		utils.FailWithoutData(c, err.Error())

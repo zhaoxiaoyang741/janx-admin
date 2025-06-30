@@ -2,17 +2,20 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"janx-admin/app/model"
-	"janx-admin/app/req"
+	"janx-admin/app/vo"
 	"janx-admin/global"
+	"janx-admin/pkg/utils"
 	"strings"
 )
 
 type UserServiceInterface interface {
 	Create(model.User) error
 	Update(id uint, user model.User) error
-	Delete(ids req.UserDeleteReq) error
-	List(r *req.UserListReq) (list []*model.User, total int64, err error)
+	Delete(ids vo.UserDeleteReq) error
+	List(r *vo.UserListReq) (list []*model.User, total int64, err error)
+	ValidateUser(username string, password string) (model.User, error)
 }
 
 type UserService struct {
@@ -37,12 +40,12 @@ func (u *UserService) Update(id uint, user model.User) error {
 	return err
 }
 
-func (u *UserService) Delete(ids req.UserDeleteReq) error {
+func (u *UserService) Delete(ids vo.UserDeleteReq) error {
 	err := global.Db.Where("id in (?)", ids.Ids).Delete(&model.User{}).Error
 	return err
 }
 
-func (u *UserService) List(r *req.UserListReq) (list []*model.User, total int64, err error) {
+func (u *UserService) List(r *vo.UserListReq) (list []*model.User, total int64, err error) {
 	db := global.Db.Model(&model.User{}).Order("created_at desc")
 	if strings.TrimSpace(r.Username) != "" {
 		db.Where("username like ?", "%"+r.Username+"%").Find(&list)
@@ -62,4 +65,24 @@ func (u *UserService) List(r *req.UserListReq) (list []*model.User, total int64,
 		err = db.Find(&list).Error
 	}
 	return list, total, err
+}
+
+func (u *UserService) ValidateUser(username string, password string) (model.User, error) {
+	user := model.User{}
+	err := global.Db.Where("username = ?", username).First(&user).Error
+	if user.ID <= 0 {
+		return user, errors.New("用户不存在")
+	}
+
+	if err != nil {
+		return user, fmt.Errorf("获取用户错误：%s", err.Error())
+	}
+	if user.Status == 0 {
+		return user, errors.New("用户已被禁用，请联系管理员")
+	}
+	ok := utils.CheckPasswordHash(password, user.Password)
+	if !ok {
+		return user, errors.New("用户名或密码错误")
+	}
+	return user, nil
 }
