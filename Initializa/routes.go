@@ -1,6 +1,7 @@
 package initializa
 
 import (
+	"fmt"
 	v1 "janx-admin/app/api/v1"
 	"janx-admin/global"
 	"janx-admin/pkg/middleware"
@@ -14,5 +15,10 @@ func InitRoutes(r *gin.Engine) {
 	apiGroup := r.Group(global.Conf.System.UrlPathPrefix)
 	apiGroup.Use(middleware.TimeMiddleware())
 	// v1.InitBaseApi(apiGroup)
-	v1.InitUserApi(apiGroup)
+	authMiddleware, err := middleware.InitAuth()
+	if err != nil {
+		panic(fmt.Sprintf("初始化JWT中间件失败：%v", err))
+	}
+	v1.InitUserApi(apiGroup, authMiddleware)
+	v1.InitBaseApi(apiGroup, authMiddleware)
 }

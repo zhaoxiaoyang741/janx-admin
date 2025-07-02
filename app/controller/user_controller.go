@@ -1,14 +1,16 @@
 package controller
 
 import (
-	"janx-admin/app/controller/utils"
 	"janx-admin/app/model"
+	"janx-admin/app/response"
 	"janx-admin/app/service"
 	"janx-admin/app/vo"
+	"janx-admin/global"
 	encUtils "janx-admin/pkg/utils"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type UserServiceInterface interface {
@@ -26,88 +28,113 @@ func NewUserController() *UserController {
 }
 
 func (uc *UserController) Create(c *gin.Context) {
-	var r vo.UserCreateReq
-	err := utils.CheckReq(c, &r)
-	if err != nil {
-		utils.FailWithoutData(c, err.Error())
+	var req vo.UserCreateReq
+	// 参数绑定
+	if err := c.ShouldBind(&req); err != nil {
+		response.FailWithoutData(c, err.Error())
+		return
+	}
+
+	//参数校验
+	if err := global.Validate.Struct(&req); err != nil {
+		errStr := err.(validator.ValidationErrors)[0].Translate(global.Trans)
+		response.Fail(c, nil, errStr)
 		return
 	}
 	user := &model.User{}
-	password := r.Password
+	password := req.Password
 	if password == "" {
 		password = "123456"
 	}
 
 	encPassword, err := encUtils.EncryptPassword(password)
 	if err != nil {
-		utils.FailWithoutData(c, err.Error())
+		response.FailWithoutData(c, err.Error())
 		return
 	}
-	user.Username = r.Username
-	user.Nickname = r.Nickname
+	user.Username = req.Username
+	user.Nickname = req.Nickname
 	user.Password = encPassword
-	user.Email = r.Email
-	user.Phone = r.Phone
-	user.Avatar = r.Avatar
+	user.Email = req.Email
+	user.Phone = req.Phone
+	user.Avatar = req.Avatar
 	user.CreatedAt = time.Now()
 	user.Status = 1
 	err = uc.userService.Create(*user)
 	if err != nil {
-		utils.FailWithoutData(c, err.Error())
+		response.FailWithoutData(c, err.Error())
 		return
 	}
-	utils.Success(c, nil, "创建用户成功")
+	response.Success(c, nil, "创建用户成功")
 }
 
 func (uc *UserController) Update(c *gin.Context) {
-	var r vo.UserUpdataReq
-	err := utils.CheckReq(c, &r)
-	if err != nil {
-		utils.FailWithoutData(c, err.Error())
+	var req vo.UserUpdataReq
+	if err := c.ShouldBind(&req); err != nil {
+		response.FailWithoutData(c, err.Error())
+		return
+	}
+
+	//参数校验
+	if err := global.Validate.Struct(&req); err != nil {
+		errStr := err.(validator.ValidationErrors)[0].Translate(global.Trans)
+		response.Fail(c, nil, errStr)
 		return
 	}
 	user := &model.User{}
-	user.Avatar = r.Avatar
-	user.Nickname = r.Nickname
-	user.Email = r.Email
-	user.Phone = r.Phone
-	err = uc.userService.Update(r.ID, *user)
+	user.Avatar = req.Avatar
+	user.Nickname = req.Nickname
+	user.Email = req.Email
+	user.Phone = req.Phone
+	err := uc.userService.Update(req.ID, *user)
 	if err != nil {
-		utils.FailWithoutData(c, err.Error())
+		response.FailWithoutData(c, err.Error())
 		return
 	}
-	utils.Success(c, nil, "更新用户成功")
+	response.Success(c, nil, "更新用户成功")
 
 }
 
 func (uc *UserController) Delete(c *gin.Context) {
-	var r vo.UserDeleteReq
-	err := utils.CheckReq(c, &r)
-	if err != nil {
-		utils.FailWithoutData(c, err.Error())
+	var req vo.UserDeleteReq
+	if err := c.ShouldBind(&req); err != nil {
+		response.FailWithoutData(c, err.Error())
 		return
 	}
-	err = uc.userService.Delete(r)
-	if err != nil {
-		utils.FailWithoutData(c, err.Error())
+
+	//参数校验
+	if err := global.Validate.Struct(&req); err != nil {
+		errStr := err.(validator.ValidationErrors)[0].Translate(global.Trans)
+		response.Fail(c, nil, errStr)
 		return
 	}
-	utils.Success(c, nil, "删除用户成功")
+	err := uc.userService.Delete(req)
+	if err != nil {
+		response.FailWithoutData(c, err.Error())
+		return
+	}
+	response.Success(c, nil, "删除用户成功")
 }
 
 func (uc *UserController) List(c *gin.Context) {
-	var r vo.UserListReq
-	err := utils.CheckReq(c, &r)
-	if err != nil {
-		utils.FailWithoutData(c, err.Error())
+	var req vo.UserListReq
+	if err := c.ShouldBind(&req); err != nil {
+		response.FailWithoutData(c, err.Error())
 		return
 	}
-	userList, total, err := uc.userService.List(&r)
-	if err != nil {
-		utils.FailWithoutData(c, err.Error())
+
+	//参数校验
+	if err := global.Validate.Struct(&req); err != nil {
+		errStr := err.(validator.ValidationErrors)[0].Translate(global.Trans)
+		response.Fail(c, nil, errStr)
 		return
 	}
-	utils.Success(c, gin.H{
+	userList, total, err := uc.userService.List(&req)
+	if err != nil {
+		response.FailWithoutData(c, err.Error())
+		return
+	}
+	response.Success(c, gin.H{
 		"list":  userList,
 		"total": total,
 	}, "获取用户列表成功")

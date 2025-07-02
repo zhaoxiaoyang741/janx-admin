@@ -1,7 +1,9 @@
 package middleware
 
 import (
-	"errors"
+	"fmt"
+	"janx-admin/app/model"
+	"janx-admin/app/response"
 	"janx-admin/app/service"
 	"janx-admin/app/vo"
 	"janx-admin/global"
@@ -15,8 +17,8 @@ import (
 // InitAuth 初始化jwt中间件
 func InitAuth() (*jwt.GinJWTMiddleware, error) {
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
-		Realm: global.Conf.Jwt.Realm, // jwt标识
-		// Key:             []byte(global.Conf.Jwt.Key),                           // 服务端密钥
+		Realm:           global.Conf.Jwt.Realm,                                 // jwt标识
+		Key:             []byte(global.Conf.Jwt.Key),                           // 服务端密钥
 		Timeout:         time.Hour * time.Duration(global.Conf.Jwt.Timeout),    // token过期时间
 		MaxRefresh:      time.Hour * time.Duration(global.Conf.Jwt.MaxRefresh), // token最大刷新时间(RefreshToken过期时间=Timeout+MaxRefresh)
 		PayloadFunc:     payloadFunc,                                           // 有效载荷处理
@@ -36,15 +38,15 @@ func InitAuth() (*jwt.GinJWTMiddleware, error) {
 
 // 有效载荷处理
 func payloadFunc(data interface{}) jwt.MapClaims {
-	// if v, ok := data.(map[string]interface{}); ok {
-	// 	var user model.User
-	// 	// 将用户json转为结构体
-	// 	util.JsonI2Struct(v["user"], &user)
-	// 	return jwt.MapClaims{
-	// 		jwt.IdentityKey: user.ID,
-	// 		"user":          v["user"],
-	// 	}
-	// }
+	if v, ok := data.(map[string]interface{}); ok {
+		var user model.User
+		// 将用户json转为结构体
+		utils.JsonI2Struct(v["user"], &user)
+		return jwt.MapClaims{
+			jwt.IdentityKey: user.ID,
+			"user":          v["user"],
+		}
+	}
 	return jwt.MapClaims{}
 }
 
@@ -67,16 +69,17 @@ func login(c *gin.Context) (interface{}, error) {
 		return nil, err
 	}
 
-	ok := utils.VerifyCaptcha(req.CaptchaId, req.Captcha)
-	if !ok {
-		return nil, errors.New("验证码错误")
-	}
+	// ok := utils.VerifyCaptcha(req.CaptchaId, req.Captcha)
+	// if !ok {
+	// 	return nil, errors.New("验证码错误")
+	// }
 
 	userService := service.NewUserService()
 	user, err := userService.ValidateUser(req.Username, req.Password)
 	if err != nil {
 		return nil, err
 	}
+
 	return map[string]interface{}{
 		"user": utils.Struct2Json(user),
 	}, nil
@@ -85,46 +88,46 @@ func login(c *gin.Context) (interface{}, error) {
 
 // 用户登录校验成功处理
 func authorizator(data interface{}, c *gin.Context) bool {
-	// if v, ok := data.(map[string]interface{}); ok {
-	// 	userStr := v["user"].(string)
-	// 	var user model.User
-	// 	// 将用户json转为结构体
-	// 	util.Json2Struct(userStr, &user)
-	// 	// 将用户保存到context, api调用时取数据方便
-	// 	c.Set("user", user)
-	// 	return true
-	// }
-	// return false
+	global.Logger.Info("用户登录校验成功处理")
+	if v, ok := data.(map[string]interface{}); ok {
+		userStr := v["user"].(string)
+		var user model.User
+		// 将用户json转为结构体
+		utils.Json2Struct(userStr, &user)
+		// 将用户保存到context, api调用时取数据方便
+		c.Set("user", user)
+		return true
+	}
 	return false
 }
 
 // 用户登录校验失败处理
 func unauthorized(c *gin.Context, code int, message string) {
 	// common.Log.Debugf("JWT认证失败, 错误码: %d, 错误信息: %s", code, message)
-	// response.Response(c, code, code, nil, fmt.Sprintf("JWT认证失败, 错误码: %d, 错误信息: %s", code, message))
+	response.Response(c, code, code, nil, fmt.Sprintf("JWT认证失败, 错误码: %d, 错误信息: %s", code, message))
 }
 
 // 登录成功后的响应
 func loginResponse(c *gin.Context, code int, token string, expires time.Time) {
-	// response.Response(c, code, code,
-	// 	gin.H{
-	// 		"token":   token,
-	// 		"expires": expires.Format("2006-01-02 15:04:05"),
-	// 	},
-	// 	"登录成功")
+	response.Response(c, code, code,
+		gin.H{
+			"token":   token,
+			"expires": expires.Format("2006-01-02 15:04:05"),
+		},
+		"登录成功")
 }
 
 // 登出后的响应
 func logoutResponse(c *gin.Context, code int) {
-	// response.Success(c, nil, "退出成功")
+	response.Success(c, nil, "退出成功")
 }
 
 // 刷新token后的响应
 func refreshResponse(c *gin.Context, code int, token string, expires time.Time) {
-	// response.Response(c, code, code,
-	// 	gin.H{
-	// 		"token":   token,
-	// 		"expires": expires,
-	// 	},
-	// 	"刷新token成功")
+	response.Response(c, code, code,
+		gin.H{
+			"token":   token,
+			"expires": expires,
+		},
+		"刷新token成功")
 }
