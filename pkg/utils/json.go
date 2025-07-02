@@ -12,3 +12,16 @@ func Struct2Json(obj interface{}) string {
 	}
 	return string(str)
 }
+
+func Json2Struct(jsonStr string, obj interface{}) error {
+	err := json.Unmarshal([]byte(jsonStr), obj)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func JsonI2Struct(str interface{}, obj interface{}) {
+	JsonStr := str.(string)
+	Json2Struct(JsonStr, obj)
+}

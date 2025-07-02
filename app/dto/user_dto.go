@@ -3,15 +3,15 @@ package dto
 import "janx-admin/app/model"
 
 type UserInfo struct {
+	ID       uint   `json:"id"`
 	Username string `json:"username" form:"username"`
-	Email    string `json:"email" form:"email"`
-	Phone    string `json:"phone" form:"phone"`
+	Nickname string `json:"nickname" form:"nickname"`
 }
 
 func (u *UserInfo) TransitUser(user *model.User) UserInfo {
 	return UserInfo{
+		ID:       user.ID,
 		Username: user.Username,
-		Email:    user.Email,
-		Phone:    user.Phone,
+		Nickname: user.Nickname,
 	}
 }

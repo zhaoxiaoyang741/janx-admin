@@ -3,10 +3,11 @@ package v1
 import (
 	"janx-admin/app/controller"
 
+	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 )
 
-func InitUserApi(r *gin.RouterGroup) gin.IRouter {
+func InitUserApi(r *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddleware) gin.IRouter {
 	userController := controller.NewUserController()
 	router := r.Group("/user")
 	{
