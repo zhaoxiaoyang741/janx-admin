@@ -30,4 +30,5 @@ func InitService() {
 
 	// global.Logger.Info(fmt.Sprintf("HTTP服务已启动，运行地址：http://%s\n", address))
 	fmt.Printf("HTTP服务已启动，运行地址：http://%s\n", address)
+	global.Logger.Info(fmt.Sprintf("swagger文档地址：http://%s/swagger/index.html", address))
 }

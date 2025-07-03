@@ -11,6 +11,20 @@ import (
 	"janx-admin/global"
 )
 
+// @title jiax-admin
+// @version 1.0
+// @description jiax-admin is a private management background
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name cwy
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host zhaoxiaoyang.com
+// @BasePath /api
 func main() {
 	// 初始化配置
 	global.Conf = config.InitConfig()

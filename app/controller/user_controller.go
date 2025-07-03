@@ -27,6 +27,14 @@ func NewUserController() *UserController {
 	}
 }
 
+// 创建用户
+// @Summary 用户管理
+// @Description  创建新用户
+// @Tags User
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} response.ResponseData{message=string} "创建用户成功"
+// @Router /api/v1/user/create [post]
 func (uc *UserController) Create(c *gin.Context) {
 	var req vo.UserCreateReq
 	// 参数绑定
@@ -68,6 +76,14 @@ func (uc *UserController) Create(c *gin.Context) {
 	response.Success(c, nil, "创建用户成功")
 }
 
+// 更新用户信息
+// @Summary 更新用户信息
+// @Description  更新用户信息
+// @Tags User
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} response.ResponseData{message=string} "更新用户成功"
+// @Router /api/v1/user/update [patch]
 func (uc *UserController) Update(c *gin.Context) {
 	var req vo.UserUpdataReq
 	if err := c.ShouldBind(&req); err != nil {
@@ -95,6 +111,14 @@ func (uc *UserController) Update(c *gin.Context) {
 
 }
 
+// 删除用户信息
+// @Summary 删除用户信息
+// @Description  根据id删除用户信息
+// @Tags User
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} response.ResponseData{message=string} "删除用户成功"
+// @Router /api/v1/user/delete [delete]
 func (uc *UserController) Delete(c *gin.Context) {
 	var req vo.UserDeleteReq
 	if err := c.ShouldBind(&req); err != nil {
@@ -116,6 +140,14 @@ func (uc *UserController) Delete(c *gin.Context) {
 	response.Success(c, nil, "删除用户成功")
 }
 
+// 获取用户信息列表
+// @Summary 获取用户信息列表
+// @Description  获取用户信息列表(username 和 nickname 可模糊查询)
+// @Tags User
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} response.ResponseData{data=response.ResListData{list=[]model.User}} "成功返回用户列表"
+// @Router /api/v1/user/list [get]
 func (uc *UserController) List(c *gin.Context) {
 	var req vo.UserListReq
 	if err := c.ShouldBind(&req); err != nil {
