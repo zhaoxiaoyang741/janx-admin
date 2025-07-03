@@ -24,6 +24,12 @@ func FailWithoutData(c *gin.Context, message string) {
 	Response(c, http.StatusBadRequest, 400, nil, message)
 }
 
+type ResponseSuccess struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+}
+
 type ResponseData struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
@@ -38,4 +44,9 @@ type ResponseDataWithData struct {
 type ResListData struct {
 	Total int         `json:"total" example:"100" description:"总记录数"`
 	List  interface{} `json:"list" swaggerignore:"true" description:"数据列表"`
+}
+
+type LoginResponse struct {
+	Token   string `json:"token"`
+	Expires string `json:"expires"`
 }

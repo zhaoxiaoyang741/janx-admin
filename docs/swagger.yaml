@@ -10,6 +10,8 @@ definitions:
         type: string
       email:
         type: string
+      gender:
+        type: integer
       id:
         description: 主键ID
         type: integer
@@ -30,6 +32,13 @@ definitions:
       username:
         type: string
     type: object
+  response.LoginResponse:
+    properties:
+      expires:
+        type: string
+      token:
+        type: string
+    type: object
   response.ResListData:
     properties:
       total:
@@ -42,6 +51,80 @@ definitions:
         type: integer
       message:
         type: string
+    type: object
+  response.ResponseSuccess:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+  vo.SystemLoginReq:
+    properties:
+      captcha:
+        type: string
+      captcha_id:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  vo.UserCreateReq:
+    properties:
+      avatar:
+        type: string
+      email:
+        type: string
+      nickname:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      username:
+        type: string
+    required:
+    - nickname
+    - phone
+    - username
+    type: object
+  vo.UserDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  vo.UserListReq:
+    properties:
+      nickname:
+        type: string
+      page_num:
+        type: integer
+      page_size:
+        type: integer
+      username:
+        type: string
+    type: object
+  vo.UserUpdataReq:
+    properties:
+      avatar:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      nickname:
+        type: string
+      phone:
+        type: string
+    required:
+    - id
     type: object
 host: zhaoxiaoyang.com
 info:
@@ -57,11 +140,85 @@ info:
   title: jiax-admin
   version: "1.0"
 paths:
+  /api/v1/base/login:
+    post:
+      consumes:
+      - application/json
+      description: 账号密码登录
+      parameters:
+      - description: 用户创建请求参数
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/vo.SystemLoginReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 登录成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.LoginResponse'
+            - properties:
+                token:
+                  type: string
+              type: object
+      summary: 用户登录
+      tags:
+      - Base
+  /api/v1/base/logout:
+    post:
+      consumes:
+      - application/json
+      description: 用户登出
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 退出成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseSuccess'
+            - properties:
+                string:
+                  type: string
+              type: object
+      summary: 用户登出
+      tags:
+      - Base
+  /api/v1/base/refreshToken:
+    post:
+      consumes:
+      - application/json
+      description: 刷新token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 刷新token成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.LoginResponse'
+            - properties:
+                token:
+                  type: string
+              type: object
+      summary: 刷新token
+      tags:
+      - Base
   /api/v1/user/create:
     post:
       consumes:
       - application/json
       description: 创建新用户
+      parameters:
+      - description: 用户创建请求参数
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/vo.UserCreateReq'
       produces:
       - application/json
       responses:
@@ -74,7 +231,7 @@ paths:
                 message:
                   type: string
               type: object
-      summary: 用户管理
+      summary: 创建用户
       tags:
       - User
   /api/v1/user/delete:
@@ -82,6 +239,13 @@ paths:
       consumes:
       - application/json
       description: 根据id删除用户信息
+      parameters:
+      - description: 用户删除请求参数
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/vo.UserDeleteReq'
       produces:
       - application/json
       responses:
@@ -102,6 +266,12 @@ paths:
       consumes:
       - application/json
       description: 获取用户信息列表(username 和 nickname 可模糊查询)
+      parameters:
+      - description: 用户列表获取请求参数
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/vo.UserListReq'
       produces:
       - application/json
       responses:
@@ -129,6 +299,13 @@ paths:
       consumes:
       - application/json
       description: 更新用户信息
+      parameters:
+      - description: 用户更新请求参数
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/vo.UserUpdataReq'
       produces:
       - application/json
       responses:

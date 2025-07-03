@@ -28,11 +28,12 @@ func NewUserController() *UserController {
 }
 
 // 创建用户
-// @Summary 用户管理
+// @Summary 创建用户
 // @Description  创建新用户
 // @Tags User
 // @Accept  json
 // @Produce  json
+// @Param body body vo.UserCreateReq true "用户创建请求参数"
 // @Success 200 {object} response.ResponseData{message=string} "创建用户成功"
 // @Router /api/v1/user/create [post]
 func (uc *UserController) Create(c *gin.Context) {
@@ -82,6 +83,7 @@ func (uc *UserController) Create(c *gin.Context) {
 // @Tags User
 // @Accept  json
 // @Produce  json
+// @Param body body vo.UserUpdataReq true "用户更新请求参数"
 // @Success 200 {object} response.ResponseData{message=string} "更新用户成功"
 // @Router /api/v1/user/update [patch]
 func (uc *UserController) Update(c *gin.Context) {
@@ -117,6 +119,7 @@ func (uc *UserController) Update(c *gin.Context) {
 // @Tags User
 // @Accept  json
 // @Produce  json
+// @Param body body vo.UserDeleteReq true "用户删除请求参数"
 // @Success 200 {object} response.ResponseData{message=string} "删除用户成功"
 // @Router /api/v1/user/delete [delete]
 func (uc *UserController) Delete(c *gin.Context) {
@@ -146,6 +149,7 @@ func (uc *UserController) Delete(c *gin.Context) {
 // @Tags User
 // @Accept  json
 // @Produce  json
+// @Param body body vo.UserListReq false "用户列表获取请求参数"
 // @Success 200 {object} response.ResponseData{data=response.ResListData{list=[]model.User}} "成功返回用户列表"
 // @Router /api/v1/user/list [get]
 func (uc *UserController) List(c *gin.Context) {

@@ -61,6 +61,15 @@ func identityHandler(c *gin.Context) interface{} {
 }
 
 // 校验token的正确性, 处理登录逻辑
+// 用户登录
+// @Summary 用户登录
+// @Description  账号密码登录
+// @Tags Base
+// @Accept  json
+// @Produce  json
+// @Param body body vo.SystemLoginReq true "用户创建请求参数"
+// @Success 200 {object} response.LoginResponse{token=string} "登录成功"
+// @Router /api/v1/base/login [post]
 func login(c *gin.Context) (interface{}, error) {
 	var req vo.SystemLoginReq
 	// var req vo.RegisterAndLoginRequest
@@ -118,11 +127,27 @@ func loginResponse(c *gin.Context, code int, token string, expires time.Time) {
 }
 
 // 登出后的响应
+// 用户登出
+// @Summary 用户登出
+// @Description  用户登出
+// @Tags Base
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} response.ResponseSuccess{string=string} "退出成功"
+// @Router /api/v1/base/logout [post]
 func logoutResponse(c *gin.Context, code int) {
 	response.Success(c, nil, "退出成功")
 }
 
 // 刷新token后的响应
+// 刷新token
+// @Summary 刷新token
+// @Description  刷新token
+// @Tags Base
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} response.LoginResponse{token=string} "刷新token成功"
+// @Router /api/v1/base/refreshToken [post]
 func refreshResponse(c *gin.Context, code int, token string, expires time.Time) {
 	response.Response(c, code, code,
 		gin.H{
