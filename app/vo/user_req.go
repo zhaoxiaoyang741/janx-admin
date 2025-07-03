@@ -18,7 +18,7 @@ type UserUpdataReq struct {
 }
 
 type UserDeleteReq struct {
-	Ids []uint `json:"ids" form:"ids"`
+	DeleteReq
 }
 
 type UserListReq struct {

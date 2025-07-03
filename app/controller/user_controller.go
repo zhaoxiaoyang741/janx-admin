@@ -14,14 +14,17 @@ import (
 )
 
 type UserServiceInterface interface {
-	Create(*gin.Context)
+	Create(c *gin.Context)
+	Update(c *gin.Context)
+	Delete(c *gin.Context)
+	List(c *gin.Context)
 }
 
 type UserController struct {
 	userService service.UserServiceInterface
 }
 
-func NewUserController() *UserController {
+func NewUserController() UserServiceInterface {
 	return &UserController{
 		userService: service.NewUserService(),
 	}
@@ -69,7 +72,7 @@ func (uc *UserController) Create(c *gin.Context) {
 	user.Avatar = req.Avatar
 	user.CreatedAt = time.Now()
 	user.Status = 1
-	err = uc.userService.Create(*user)
+	err = uc.userService.Create(user)
 	if err != nil {
 		response.FailWithoutData(c, err.Error())
 		return
@@ -104,7 +107,7 @@ func (uc *UserController) Update(c *gin.Context) {
 	user.Nickname = req.Nickname
 	user.Email = req.Email
 	user.Phone = req.Phone
-	err := uc.userService.Update(req.ID, *user)
+	err := uc.userService.Update(req.ID, user)
 	if err != nil {
 		response.FailWithoutData(c, err.Error())
 		return

@@ -159,7 +159,10 @@ func (b *DatabaseBuilder) Complete() *DatabaseBuilder {
 }
 
 func dbAutoMigrate(db *gorm.DB) {
-	if err := db.AutoMigrate(&model.User{}); err != nil {
+	if err := db.AutoMigrate(
+		&model.User{},
+		&model.Role{},
+	); err != nil {
 		red := color.New(color.FgRed).Add(color.Bold) // 创建红色加粗的格式
 		red.Printf("failed to migrate database:\n")   // 打印红色错误信息并退出
 		panic(err.Error())

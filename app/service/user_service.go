@@ -11,8 +11,8 @@ import (
 )
 
 type UserServiceInterface interface {
-	Create(model.User) error
-	Update(id uint, user model.User) error
+	Create(*model.User) error
+	Update(id uint, user *model.User) error
 	Delete(ids vo.UserDeleteReq) error
 	List(r *vo.UserListReq) (list []*model.User, total int64, err error)
 	ValidateUser(username string, password string) (model.User, error)
@@ -25,7 +25,7 @@ func NewUserService() UserServiceInterface {
 	return &UserService{}
 }
 
-func (u *UserService) Create(user model.User) error {
+func (u *UserService) Create(user *model.User) error {
 	users := []model.User{}
 	global.Db.Where("username = ? or phone = ?", user.Username, user.Phone).Find(&users)
 	if len(users) > 0 {
@@ -35,7 +35,7 @@ func (u *UserService) Create(user model.User) error {
 	return err
 }
 
-func (u *UserService) Update(id uint, user model.User) error {
+func (u *UserService) Update(id uint, user *model.User) error {
 	err := global.Db.Model(&model.User{}).Where("id = ?", id).Updates(user).Error
 	return err
 }
