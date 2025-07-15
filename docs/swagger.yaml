@@ -1,5 +1,33 @@
 basePath: /api
 definitions:
+  model.Role:
+    properties:
+      createBy:
+        type: string
+      createdAt:
+        type: string
+      desc:
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      keyword:
+        type: string
+      name:
+        type: string
+      sort:
+        type: integer
+      status:
+        type: integer
+      updatedAt:
+        type: string
+      updatedBy:
+        type: string
+      users:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+    type: object
   model.User:
     properties:
       avatar:
@@ -23,6 +51,10 @@ definitions:
         type: string
       phone:
         type: string
+      roles:
+        items:
+          $ref: '#/definitions/model.Role'
+        type: array
       status:
         type: integer
       updatedAt:
@@ -59,6 +91,62 @@ definitions:
       data: {}
       message:
         type: string
+    type: object
+  vo.RoleCreateReq:
+    properties:
+      desc:
+        type: string
+      keyword:
+        type: string
+      name:
+        type: string
+      sort:
+        type: integer
+      status:
+        type: integer
+    required:
+    - keyword
+    - name
+    type: object
+  vo.RoleDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  vo.RoleListReq:
+    properties:
+      keyword:
+        type: string
+      name:
+        type: string
+      page_num:
+        type: integer
+      page_size:
+        type: integer
+    required:
+    - keyword
+    - name
+    type: object
+  vo.RoleUpdateReq:
+    properties:
+      desc:
+        type: string
+      id:
+        type: integer
+      keyword:
+        type: string
+      name:
+        type: string
+      sort:
+        type: integer
+      status:
+        type: integer
+    required:
+    - id
+    - keyword
+    - name
     type: object
   vo.SystemLoginReq:
     properties:
@@ -207,6 +295,120 @@ paths:
       summary: 刷新token
       tags:
       - Base
+  /api/v1/role/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建角色
+      parameters:
+      - description: 角色创建请求参数
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/vo.RoleCreateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 创建角色成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                message:
+                  type: string
+              type: object
+      summary: 创建角色
+      tags:
+      - 角色管理
+  /api/v1/role/delete:
+    delete:
+      consumes:
+      - application/json
+      description: 根据id删除角色信息
+      parameters:
+      - description: 角色删除请求参数
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/vo.RoleDeleteReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 删除角色成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                message:
+                  type: string
+              type: object
+      summary: 删除角色信息
+      tags:
+      - 角色管理
+  /api/v1/role/list:
+    get:
+      consumes:
+      - application/json
+      description: 获取角色信息列表(name 和 keyword 可模糊查询)
+      parameters:
+      - description: 角色列表获取请求参数
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/vo.RoleListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功返回角色列表
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.ResListData'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/model.Role'
+                        type: array
+                    type: object
+              type: object
+      summary: 获取角色信息列表
+      tags:
+      - 角色管理
+  /api/v1/role/update:
+    patch:
+      consumes:
+      - application/json
+      description: 更新角色信息
+      parameters:
+      - description: 角色更新请求参数
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/vo.RoleUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 角色用户成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                message:
+                  type: string
+              type: object
+      summary: 更新角色信息
+      tags:
+      - 角色管理
   /api/v1/user/create:
     post:
       consumes:
@@ -233,7 +435,7 @@ paths:
               type: object
       summary: 创建用户
       tags:
-      - User
+      - 用户管理
   /api/v1/user/delete:
     delete:
       consumes:
@@ -260,7 +462,7 @@ paths:
               type: object
       summary: 删除用户信息
       tags:
-      - User
+      - 用户管理
   /api/v1/user/list:
     get:
       consumes:
@@ -293,7 +495,7 @@ paths:
               type: object
       summary: 获取用户信息列表
       tags:
-      - User
+      - 用户管理
   /api/v1/user/update:
     patch:
       consumes:
@@ -320,5 +522,5 @@ paths:
               type: object
       summary: 更新用户信息
       tags:
-      - User
+      - 用户管理
 swagger: "2.0"

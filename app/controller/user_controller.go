@@ -33,7 +33,7 @@ func NewUserController() UserServiceInterface {
 // 创建用户
 // @Summary 创建用户
 // @Description  创建新用户
-// @Tags User
+// @Tags 用户管理
 // @Accept  json
 // @Produce  json
 // @Param body body vo.UserCreateReq true "用户创建请求参数"
@@ -83,7 +83,7 @@ func (uc *UserController) Create(c *gin.Context) {
 // 更新用户信息
 // @Summary 更新用户信息
 // @Description  更新用户信息
-// @Tags User
+// @Tags 用户管理
 // @Accept  json
 // @Produce  json
 // @Param body body vo.UserUpdataReq true "用户更新请求参数"
@@ -119,7 +119,7 @@ func (uc *UserController) Update(c *gin.Context) {
 // 删除用户信息
 // @Summary 删除用户信息
 // @Description  根据id删除用户信息
-// @Tags User
+// @Tags 用户管理
 // @Accept  json
 // @Produce  json
 // @Param body body vo.UserDeleteReq true "用户删除请求参数"
@@ -149,7 +149,7 @@ func (uc *UserController) Delete(c *gin.Context) {
 // 获取用户信息列表
 // @Summary 获取用户信息列表
 // @Description  获取用户信息列表(username 和 nickname 可模糊查询)
-// @Tags User
+// @Tags 用户管理
 // @Accept  json
 // @Produce  json
 // @Param body body vo.UserListReq false "用户列表获取请求参数"

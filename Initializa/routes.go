@@ -26,4 +26,5 @@ func InitRoutes(r *gin.Engine) {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	v1.InitUserApi(apiGroup, authMiddleware)
 	v1.InitBaseApi(apiGroup, authMiddleware)
+	v1.InitRoleApi(apiGroup, authMiddleware)
 }

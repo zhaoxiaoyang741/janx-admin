@@ -72,7 +72,7 @@ func (r *RoleController) Create(c *gin.Context) {
 
 // @Summary 更新角色信息
 // @Description  更新角色信息
-// @Tags User
+// @Tags 角色管理
 // @Accept  json
 // @Produce  json
 // @Param body body vo.RoleUpdateReq true "角色更新请求参数"
@@ -112,7 +112,7 @@ func (r *RoleController) Update(c *gin.Context) {
 // 删除角色信息
 // @Summary 删除角色信息
 // @Description  根据id删除角色信息
-// @Tags User
+// @Tags 角色管理
 // @Accept  json
 // @Produce  json
 // @Param body body vo.RoleDeleteReq true "角色删除请求参数"
@@ -145,12 +145,12 @@ func (r *RoleController) Delete(c *gin.Context) {
 // 获取角色信息列表
 // @Summary 获取角色信息列表
 // @Description  获取角色信息列表(name 和 keyword 可模糊查询)
-// @Tags User
+// @Tags 角色管理
 // @Accept  json
 // @Produce  json
 // @Param body body vo.RoleListReq false "角色列表获取请求参数"
 // @Success 200 {object} response.ResponseData{data=response.ResListData{list=[]model.Role}} "成功返回角色列表"
-// @Router /api/v1/user/list [get]
+// @Router /api/v1/role/list [get]
 func (r *RoleController) List(c *gin.Context) {
 	var req vo.RoleListReq
 	// 参数绑定
