@@ -8,6 +8,10 @@ import (
 	"janx-admin/global"
 	"janx-admin/pkg/utils"
 	"strings"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/patrickmn/go-cache"
 )
 
 type UserServiceInterface interface {
@@ -16,10 +20,14 @@ type UserServiceInterface interface {
 	Delete(ids vo.UserDeleteReq) error
 	List(r *vo.UserListReq) (list []*model.User, total int64, err error)
 	ValidateUser(username string, password string) (model.User, error)
+	GetCurrentUser(c *gin.Context) (model.User, error)
+	GetUserById(id uint) (model.User, error)
 }
 
 type UserService struct {
 }
+
+var userServiceCache = cache.New(24*time.Hour, 48*time.Hour) // 缓存2小时
 
 func NewUserService() UserServiceInterface {
 	return &UserService{}
@@ -85,4 +93,36 @@ func (u *UserService) ValidateUser(username string, password string) (model.User
 		return user, errors.New("用户名或密码错误")
 	}
 	return user, nil
+}
+
+func (u *UserService) GetUserById(id uint) (model.User, error) {
+	user := model.User{}
+	err := global.Db.Where("id = ?", id).First(&user).Error
+	return user, err
+}
+
+func (u *UserService) GetCurrentUser(c *gin.Context) (model.User, error) {
+	var newUser model.User
+	ctxUser, exist := c.Get("user")
+	if !exist {
+		return newUser, errors.New("获取用户信息失败")
+	}
+	us, _ := ctxUser.(model.User)
+
+	cacheUser, found := userServiceCache.Get(us.Username)
+	var user model.User
+	var err error
+	if found {
+		user = cacheUser.(model.User)
+		err = nil
+	} else {
+		user, err = u.GetUserById(us.ID)
+		if err != nil {
+			userServiceCache.Delete(us.Username)
+		} else {
+			userServiceCache.Set(us.Username, user, cache.DefaultExpiration)
+		}
+	}
+
+	return user, err
 }

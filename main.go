@@ -41,6 +41,9 @@ func main() {
 	// 初始化
 	initializa.InitValidate()
 
+	// 初始化Casbin
+	initializa.InitCasbinEnforcer()
+
 	// 设置信号处理，使主程序保持运行
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)

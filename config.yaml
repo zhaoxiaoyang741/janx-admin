@@ -5,23 +5,23 @@ system:
   urlpathprefix: /api/v1
 
 db:
-  host: 192.168.18.45
-  port: 5432
-  hostname: janx-admin
-  password: 3tYapHD3aQAzCEmm
-  database: janx-admin
-  # host: 192.168.217.129
+  # host: 192.168.18.45
   # port: 5432
-  # hostname: root
-  # password: pg123456
+  # hostname: janx-admin
+  # password: 3tYapHD3aQAzCEmm
   # database: janx-admin
+  host: 192.168.217.129
+  port: 5432
+  hostname: root
+  password: pg123456
+  database: janx-admin
   # 最大连接数
   maxopenconns: 25
   # 最大空闲连接
   maxidleconns: 5
   # 连接超时（秒）
   connmaxlifetime: 5
-  logstatus: false
+  logstatus: true
   loglevel: info
 
 log:
@@ -42,4 +42,9 @@ jwt:
   timeout: 12
   # 刷新token最大过期时间, 小时
   max-refresh: 12
+
+# casbin配置
+casbin:
+  # 模型配置文件, config.yml相对路径
+  model-path: 'rbac_model.conf'
 

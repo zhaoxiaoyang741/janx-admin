@@ -3,6 +3,7 @@ package global
 import (
 	"janx-admin/config"
 
+	"github.com/casbin/casbin/v2"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"github.com/sirupsen/logrus"
@@ -20,5 +21,6 @@ var (
 	Validate *validator.Validate
 
 	// 全局翻译器
-	Trans ut.Translator
+	Trans          ut.Translator
+	CasbinEnforcer *casbin.Enforcer
 )
